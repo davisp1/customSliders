@@ -1,8 +1,9 @@
 var customSliders = {
     counter : 5,
     delayIncrement : 50,
-    duration : 400,
+    duration : 300,
     difference : 100,
+    showPast : false,
     selector : "#actu_slides",
     position : "-=",
     leftToRight : true,
@@ -68,8 +69,11 @@ var customSliders = {
             var delay=0;
             customSliders.flag=true;
             for (var i = 0; i < customSliders.counter; i++) {
-                $($current[i]).delay(delay).animate({top: new_position, opacity:0.4},customSliders.duration);
-                //.css("top",new_position).css("opacity",0.4);
+                if ( customSliders.showPast === true) {
+                    $($current[i]).delay(delay).animate({top: new_position, opacity:0.4},customSliders.duration);
+                } else {
+                    $($current[i]).css("top",new_position).css("opacity",0.4);
+                }
                 $($new_set[i]).delay(delay+customSliders.difference).animate({top: new_position, opacity:1},customSliders.duration);
                 delay += customSliders.delayIncrement;
             }
@@ -80,19 +84,15 @@ var customSliders = {
     },
     manageButtons : function($new_set) {
             if($new_set.length <= customSliders.counter) {
-                if(customSliders.leftToRight===true)
-                {
+                if(customSliders.leftToRight===true) {
                     $(".next_slide").hide();
                     $(".prev_slide").show();
                 }
-                else
-                {
+                else {
                     $(".prev_slide").hide();
                     $(".next_slide").show();
                 }
-            }
-            else
-            {
+            } else {
                     $(".prev_slide").show();
                     $(".next_slide").show();
             }
