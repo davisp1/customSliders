@@ -77,7 +77,7 @@ var customSliders = {
                 $($new_set[i]).delay(delay+customSliders.difference).animate({top: new_position, opacity:1},customSliders.duration);
                 delay += customSliders.delayIncrement;
             }
-            setTimeout(function(){customSliders.flag=false;}, delay+customSliders.duration);
+            setTimeout(function(){customSliders.flag=false;}, delay+customSliders.duration+customSliders.difference);
             customSliders.oElements.not($.merge($current,$new_set)).css("top",new_position);
             $current.removeClass("active");
             $($new_set).addClass("active");
