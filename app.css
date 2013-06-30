@@ -14,8 +14,10 @@ div.bloc_actus div{
     border-style: solid;
     border-color: black;
     border-width: 1px;
-    width: 19%;
+    width: 19.7%;
     opacity:0.4;
+    float: left;
+    min-height: 1px;
     top:0;
 }
 
