@@ -7,6 +7,7 @@
           "difference" : 100,
           "showPast" : true,
           "counter" : null,
+          "autodesign" : true
         };
 
         var plugin = this;
@@ -85,7 +86,10 @@
             var tmp_counter = 0;
             $oSlides.each(function( index ) {
                 var myposition = $(this).position(); 
-                var left = parseFloat(tmp_counter*pallier);
+                if(isCounterSet===true || plugin.options.autodesign==true)
+                    var left = parseFloat(tmp_counter*pallier);                
+                else
+                    var left = Math.round(((myposition.left*100)/main_width)*1000)/1000 ;
                 //console.log(left);
                 var top = 105;
                 if($(this).hasClass("active"))
