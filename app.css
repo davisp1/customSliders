@@ -1,5 +1,5 @@
 div.bloc_actus{
-    height:100px;
+    height:200px;
     width:100%;
     overflow:hidden;
     margin:0;
@@ -8,7 +8,7 @@ div.bloc_actus{
 div.bloc_actus div{
     position: relative;
     margin-left:0.1%;
-    height: 98px;
+    height: 198px;
     background-color: blue;
     border-style: solid;
     border-color: black;
