@@ -23,6 +23,7 @@
         var alreadyBusy = false;
         var changed = false;
 
+        var isCounterSet = false;
         var page = 0;
         plugin.options = {};
 
@@ -47,6 +48,10 @@
                         tmp_nb++;
                 plugin.options.counter = tmp_nb;
             }
+            else{
+                isCounterSet = true;
+            }
+
             $new_set = $oSlides.slice(0,plugin.options.counter).addClass("active");
         };
 
@@ -74,19 +79,32 @@
         };
         $.fn.customSliders.refactor = function() {
             var test = [];
+            var pallier = 100/plugin.options.counter
+            //console.log(pallier)
             var main_width = $(oElement).width();
+            var tmp_counter = 0;
             $oSlides.each(function( index ) {
-                var myposition = $(this).position();
-                var left = Math.round(((myposition.left*100)/main_width)*1000)/1000 ;
-                var top = 105
+                var myposition = $(this).position(); 
+                var left = parseFloat(tmp_counter*pallier);
+                //console.log(left);
+                var top = 105;
                 if($(this).hasClass("active"))
                     top = 0;
                 test[index] = { left : left+"%", top : top+"%" };
+                if(tmp_counter<plugin.options.counter-1)
+                    tmp_counter+=1;
+                else
+                    tmp_counter=0;
+
             });
             $oSlides.each(function( index ) {
                 var top = test[index].top;
                 var left = test[index].left;
                 $(this).css("position","absolute").css("left",left).css("top",top);
+                if(isCounterSet == true) {
+                    console.log(pallier-0.3);
+                    $(this).css("width",(pallier-0.3)+"%");
+                }
             });
             //console.log(test);
         };
