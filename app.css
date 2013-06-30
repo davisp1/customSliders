@@ -2,18 +2,19 @@ div.bloc_actus{
     height:200px;
     width:100%;
     overflow:hidden;
+    position: relative;
     margin:0;
 }
 
 div.bloc_actus div{
     position: relative;
     margin-left:0.1%;
-    height: 198px;
+    height: 100%;
     background-color: blue;
     border-style: solid;
     border-color: black;
     border-width: 1px;
-    width: 19.6%;
+    width: 19%;
     opacity:0.4;
     top:0;
 }

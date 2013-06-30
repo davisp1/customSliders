@@ -2,24 +2,28 @@
    $.customSliders = function(element,options) {
 
         var defaults = {
-          "delayIncrement" : 100,
-          "duration" : 300,
-          "difference" : 10,
-          "showPast" : true
+          "delayIncrement" : 90,
+          "duration" : 200,
+          "difference" : 100,
+          "showPast" : true,
+          "counter" : null,
         };
-        var counter = 5;
-        var current = counter;
+
+        var plugin = this;
+        var oElement = element;
+        var $oSlides = null;
         var $current_set = [];
         var $new_set = [];
+
+        var current = null;
         var height = null;
         var leftToRight = true;
         var position = "-=";
-        var plugin = this;
-        var flag = false;
-        var $oSlides = null;
-        var oElement = element;
         var new_position = null;
+
+        var alreadyBusy = false;
         var changed = false;
+
         var page = 0;
         plugin.options = {};
 
@@ -27,23 +31,34 @@
             plugin.options = $.extend({}, defaults, options);
             $oSlides = $(oElement).children("div");
             $oSlides.css("opacity",1);
-            $new_set = $oSlides.slice(0,counter).addClass("active");
-            var $example = $oSlides.first();
-            height = parseInt($example.css("border-top-width"),10) + parseInt($example.css("border-bottom-width"),10) + $example.height() + "px";
-            new_position = position + height;
-            //counter = parseInt($(customSliders.selector).width()/$(customSliders.selector).find("div:first").width(),10);
+            plugin.updateSettings();
+            current = plugin.options.counter;
             bindEvents();
             manageButtons(null,true);
+            $(element).customSliders.refactor();
+            //console.log(counter);
         };
 
-        plugin.update = function() {
-            console.log("sfksdlfkslf");
+        plugin.updateSettings = function() {
+            var $example = $oSlides.first();
+            height = parseInt($example.css("border-top-width"),10) + parseInt($example.css("border-bottom-width"),10) + $example.height() + "px";
+            //counter = parseInt($(oElement).width()/$example.width(),10);
+            var tmp_nb = 0;
+            if(plugin.options.counter === null)
+            {
+                for(var i=0; i<$oSlides.length;i++)
+                    if($oSlides.eq(i).position().top == 0)
+                        tmp_nb++;
+                plugin.options.counter = tmp_nb;
+            }
+            $new_set = $oSlides.slice(0,plugin.options.counter).addClass("active");
+            new_position = position + height;
         };
 
         var bindEvents = function() {
             $(".prev_slide").click(function(event){
-                if(flag === false)
-                { flag = true;
+                if(alreadyBusy === false)
+                { alreadyBusy = true;
                   changed = ( leftToRight !== false );
                   leftToRight = false;
                   page -= 1;
@@ -52,16 +67,33 @@
             });
 
             $(".next_slide").click(function(event){
-                console.log(flag);
-                if(flag===false)
+                if(alreadyBusy===false)
                 {
-                  flag = true;
+                  alreadyBusy = true;
                   changed = ( leftToRight !== true );
                   leftToRight = true;
                   page += 1;
                   loadNewSlide();
                 }
             });
+        };
+        $.fn.customSliders.refactor = function() {
+            var test = [];
+            var main_width = $(oElement).width();
+            $oSlides.each(function( index ) {
+                var myposition = $(this).position();
+                var left = Math.round(((myposition.left*100)/main_width)*1000)/1000 ;
+                var top = 100
+                if($(this).hasClass("active"))
+                    top = 0;
+                test[index] = { left : left+"%", top : top+"%" };
+            });
+            $oSlides.each(function( index ) {
+                var top = test[index].top;
+                var left = test[index].left;
+                $(this).css("position","absolute").css("left",left).css("top",top);
+            });
+            //console.log(test);
         };
         var setNewSlide = function() {
             var new_idx=0;
@@ -70,34 +102,30 @@
             $new_set = [];
             if(leftToRight===true) {
                 if(changed==true)
-                    current = current + counter ;
-                new_idx = current + counter ;
+                    current = current + plugin.options.counter ;
+                new_idx = current + plugin.options.counter ;
                 position = "-=";
                 $new_set = $oSlides.slice(current, new_idx);
             }
             else{
                 if(changed==true)
-                    current = current - counter ;
-                new_idx = current - counter ;
+                    current = current - plugin.options.counter ;
+                new_idx = current - plugin.options.counter ;
                 if ( new_idx < 0 ) { new_idx =0; }
                 position = "+=";
-                console.log(new_idx);
                 $new_set = $oSlides.slice(new_idx, current);
-                console.log($new_set);
             }
-            console.log("current="+current+",new="+new_idx);
+            //console.log("current="+current+",new="+new_idx);
             current = new_idx;
-           // console.log(plugin);
         };
         var loadNewSlide = function() {
                 setNewSlide();
                 manageButtons($new_set);
-                console.log($($current_set[0]).text());
-                console.log($($new_set[0]).text());
+                //console.log($($current_set[0]).text());
+                //console.log($($new_set[0]).text());
                 new_position = position + height;
-                console.log(new_position);
                 var delay=0;
-                for (var i = 0; i < counter; i++) {
+                for (var i = 0; i < plugin.options.counter; i++) {
                     if ( plugin.options.showPast === true) {
                         $($current_set[i]).delay(delay).animate({top: new_position, opacity:0.4},plugin.options.duration);
                     } else {
@@ -106,34 +134,25 @@
                     $($new_set[i]).delay(delay+plugin.options.difference).animate({top: new_position, opacity:1},plugin.options.duration);
                     delay += plugin.options.delayIncrement;
                 }
-                setTimeout(function(){flag=false;}, delay+plugin.options.duration);
-                $oSlides.not($.merge($current_set,$new_set)).css("top",new_position);
+                setTimeout(function(){alreadyBusy=false;}, delay+plugin.options.duration);
                 $($current_set).removeClass("active");
                 $($new_set).addClass("active");
         };
+
         var manageButtons = function($new_set,isbegin) {
-              console.log(page);
-              if( typeof isbegin === "undefined" || isbegin === false)
-              {
-                console.log("sfskdlmfskdfmlsd");
-                if($new_set.length < counter) {
-                    if(leftToRight===true) {
-                         setVisibility("visible","hidden");
-                    }
-                } else {
-                        if(page === 0 )
-                            { setVisibility("hidden","visible");}
-                        else
-                            setVisibility("visible","visible");
-                }
-              }
-              else
-              {     
-                  if($oSlides.length <= counter)
+              //console.log(page);
+              if($oSlides.length <= plugin.options.counter) {
                     setVisibility("hidden","hidden");
-                  else
+                }
+              if((page === 0) || (typeof isbegin !== "undefined" && isbegin === true)) {
                     setVisibility("hidden","visible");
-              }
+                }
+              else if($new_set.length < plugin.options.counter && leftToRight===true) {
+                    setVisibility("visible","hidden");
+                } 
+              else {
+                    setVisibility("visible","visible");
+                }
       };
       var setVisibility = function(previous,next){
               $(".prev_slide").css("visibility", previous);
@@ -153,7 +172,6 @@
 
                 // On crée une instance du plugin avec les options renseignées
                 var plugin = new $.customSliders(this, options);
-                plugin.update();
                 // on stocke une référence de notre plugin
                 // pour pouvoir accéder à ses méthode publiques
                 // (non utilisé dans ce plugin)
