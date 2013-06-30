@@ -16,7 +16,6 @@
         var $new_set = [];
 
         var current = null;
-        var height = null;
         var leftToRight = true;
         var position = "-=";
         var new_position = null;
@@ -40,9 +39,6 @@
         };
 
         plugin.updateSettings = function() {
-            var $example = $oSlides.first();
-            height = parseInt($example.css("border-top-width"),10) + parseInt($example.css("border-bottom-width"),10) + $example.height() + "px";
-            //counter = parseInt($(oElement).width()/$example.width(),10);
             var tmp_nb = 0;
             if(plugin.options.counter === null)
             {
@@ -52,7 +48,6 @@
                 plugin.options.counter = tmp_nb;
             }
             $new_set = $oSlides.slice(0,plugin.options.counter).addClass("active");
-            new_position = position + height;
         };
 
         var bindEvents = function() {
@@ -83,7 +78,7 @@
             $oSlides.each(function( index ) {
                 var myposition = $(this).position();
                 var left = Math.round(((myposition.left*100)/main_width)*1000)/1000 ;
-                var top = 100
+                var top = 105
                 if($(this).hasClass("active"))
                     top = 0;
                 test[index] = { left : left+"%", top : top+"%" };
@@ -123,7 +118,7 @@
                 manageButtons($new_set);
                 //console.log($($current_set[0]).text());
                 //console.log($($new_set[0]).text());
-                new_position = position + height;
+                new_position = position+"105%";
                 var delay=0;
                 for (var i = 0; i < plugin.options.counter; i++) {
                     if ( plugin.options.showPast === true) {
