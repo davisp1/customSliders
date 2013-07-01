@@ -140,7 +140,7 @@
                 manageButtons($new_set);
                 //console.log($($current_set[0]).text());
                 //console.log($($new_set[0]).text());
-                new_position = position+"105%";
+                new_position = (position+"105%").replace("=","");
                 var delay=0;
                 for (var i = 0; i < plugin.options.counter; i++) {
                     if ( plugin.options.showPast === true) {
@@ -148,7 +148,7 @@
                     } else {
                         $($current_set[i]).css("top",new_position).css("opacity",0.4);
                     }
-                    $($new_set[i]).delay(delay+plugin.options.difference).animate({top: new_position, opacity:1},plugin.options.duration);
+                    $($new_set[i]).delay(delay+plugin.options.difference).animate({top: "0%", opacity:1},plugin.options.duration);
                     delay += plugin.options.delayIncrement;
                 }
                 setTimeout(function(){alreadyBusy=false;}, delay+plugin.options.duration);
