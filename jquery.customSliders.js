@@ -32,15 +32,20 @@
             plugin.options = $.extend({}, defaults, options);
             $oSlides = $(oElement).children("div");
             $oSlides.css("opacity",1);
-            plugin.updateSettings();
+            updateSettings();
             current = plugin.options.counter;
             bindEvents();
             manageButtons(null,true);
-            $(element).customSliders.refactor();
-            //console.log(counter);
+            refactor();
         };
 
-        plugin.updateSettings = function() {
+        $.fn.customSliders.refactor = function(){ refactor () };
+        $.fn.customSliders.updateSettings = function(params){ updateSettings (params) };
+
+        var updateSettings = function(params) {
+            var old_counter = plugin.options.counter;
+            plugin.options = $.extend({}, plugin.options, params);
+            var new_counter = plugin.options.counter;
             var tmp_nb = 0;
             if(plugin.options.counter === null)
             {
@@ -48,12 +53,31 @@
                     if($oSlides.eq(i).position().top == 0)
                         tmp_nb++;
                 plugin.options.counter = tmp_nb;
+                old_counter = plugin.options.counter;
+                new_counter = plugin.options.counter;
             }
             else{
                 isCounterSet = true;
             }
-
-            $new_set = $oSlides.slice(0,plugin.options.counter).addClass("active");
+            $oSlides.removeClass("active");
+            begin_index = page*old_counter;
+            //current = begin_index+new_counter;
+            /**
+            $new_set = $oSlides.slice(begin_index,begin_index+new_counter).addClass("active").css("opacity",1);
+            console.log($new_set);
+            if(old_counter!=new_counter) {
+                isCounterSet = true;
+                page = Math.ceil(begin_index/new_counter);
+                console.log(begin_index/new_counter);
+                refactor();
+            **/
+            current = new_counter;
+            $new_set = $oSlides.slice(0,new_counter).addClass("active").css("opacity",1);
+            if(old_counter!=new_counter) {
+                isCounterSet = true;
+                page = 0
+                refactor();          
+            }
         };
 
         var bindEvents = function() {
@@ -78,27 +102,45 @@
                 }
             });
         };
-        $.fn.customSliders.refactor = function() {
+        var refactor = function() {
             var test = [];
             var pallier = 100/plugin.options.counter
             //console.log(pallier)
+            //console.log(page);
             var main_width = $(oElement).width();
             var tmp_counter = 0;
+            var flagi = 0;
             $oSlides.each(function( index ) {
                 var myposition = $(this).position(); 
+                var top = -105;
+                if($(this).hasClass("active"))
+                {
+                    flagi = flagi + 1;
+                    top = 0;
+                    if(flagi===1)
+                    {
+                        tmp_counter=0;
+                        //console.log("changed "+tmp_counter);
+                    }
+                }
+                else if(flagi>0)
+                {
+                    top = 105;
+                }
                 if(isCounterSet===true || plugin.options.autodesign==true)
-                    var left = parseFloat(tmp_counter*pallier);                
+                    {
+                        var left = parseFloat(tmp_counter*pallier);
+                        //console.log("in case" + left);                
+                    }
                 else
                     var left = Math.round(((myposition.left*100)/main_width)*1000)/1000 ;
-                //console.log(left);
-                var top = 105;
-                if($(this).hasClass("active"))
-                    top = 0;
                 test[index] = { left : left+"%", top : top+"%" };
+                //console.log(test[index]);
                 if(tmp_counter<plugin.options.counter-1)
                     tmp_counter+=1;
                 else
                     tmp_counter=0;
+                //console.log("tmp "+tmp_counter);
 
             });
             $oSlides.each(function( index ) {
@@ -106,7 +148,7 @@
                 var left = test[index].left;
                 $(this).css("position","absolute").css("left",left).css("top",top);
                 if(isCounterSet == true) {
-                    console.log(pallier-0.3);
+                    //console.log(pallier-0.3);
                     $(this).css("width",(pallier-0.3)+"%");
                 }
             });
@@ -138,6 +180,7 @@
         var loadNewSlide = function() {
                 setNewSlide();
                 manageButtons($new_set);
+                //console.log("page t=>" + page);
                 //console.log($($current_set[0]).text());
                 //console.log($($new_set[0]).text());
                 new_position = (position+"105%").replace("=","");
