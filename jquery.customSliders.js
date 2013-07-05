@@ -1,46 +1,71 @@
 (function($) {
    $.customSliders = function(element,options) {
-
+	
+	// Default options that you can override in passing options as parameter
         var defaults = {
           "delayIncrement" : 90,
           "duration" : 200,
           "difference" : 100,
           "showPast" : true,
           "counter" : null,
+	  "vertical" : true,
           "autodesign" : true
         };
 
+	// to help, we put "this" as a plugin variable
         var plugin = this;
+	// Jquery object of the container
         var oElement = element;
+	// Array containing slides as Jquery object
         var $oSlides = null;
+	// Array of current slides
         var $current_set = [];
+	// Arrat of next slides
         var $new_set = [];
 
+	// current position
         var current = null;
+	// previous/next
         var leftToRight = true;
-        var position = "-=";
-        var new_position = null;
 
+	// part of new_position variable
+        var position = "-=";
+	// variable that we use to increment css attribute
+	var new_position = null;
+
+	// flag to block loading new slides ( because it was alreading in loading )
         var alreadyBusy = false;
+	// flag that is true when we change sens
         var changed = false;
 
+	// if counter is set as a parameter or it uses default parameter
         var isCounterSet = false;
+	// current page number
         var page = 0;
         plugin.options = {};
 
+	/** 
+	* Initialisation function
+	**/
         plugin.init = function() {
             plugin.options = $.extend({}, defaults, options);
             $oSlides = $(oElement).children("div");
             $oSlides.css("opacity",1);
             updateSettings();
-            current = plugin.options.counter;
             bindEvents();
             manageButtons(null,true);
         };
 
+	/**
+	* public functions
+	**/
         $.fn.customSliders.refactor = function(){ refactor () };
         $.fn.customSliders.updateSettings = function(params){ updateSettings (params) };
 
+	/**
+	* function that updates settings and next refactor sliders  
+	* - params : all arguments that you can put in options
+	**/
         var updateSettings = function(params) {
             var old_counter = plugin.options.counter;
             plugin.options = $.extend({}, plugin.options, params);
@@ -61,17 +86,21 @@
             }
             
             $oSlides.removeClass("active");
-            current = new_counter;
             $new_set = $oSlides.slice(0,new_counter).addClass("active").css("opacity",1);
-            page = 0;
+ 
+            current = new_counter;
+	    page = 0;
             leftToRight = true;
             refactor();          
         };
-
+	
+	/**
+	* Bind onClick event on previous/next buttons 
+	**/
         var bindEvents = function() {
             $(".prev_slide").click(function(event){
-                if(alreadyBusy === false)
-                { alreadyBusy = true;
+                if(alreadyBusy === false) { 
+		  alreadyBusy = true;
                   changed = ( leftToRight !== false );
                   leftToRight = false;
                   page -= 1;
@@ -80,8 +109,7 @@
             });
 
             $(".next_slide").click(function(event){
-                if(alreadyBusy===false)
-                {
+                if(alreadyBusy===false) {
                   alreadyBusy = true;
                   changed = ( leftToRight !== true );
                   leftToRight = true;
@@ -90,6 +118,10 @@
                 }
             });
         };
+
+	/**
+	* Refactor slider to tranform structure in using position absolute
+	**/
         var refactor = function() {
             var test = [];
             var pallier = 100/plugin.options.counter
@@ -142,6 +174,10 @@
             });
             //console.log(test);
         };
+
+	/**
+	* Function that prepares new slide
+	**/ 
         var setNewSlide = function() {
             var new_idx=0;
 
@@ -165,6 +201,10 @@
             //console.log("current="+current+",new="+new_idx);
             current = new_idx;
         };
+
+	/**
+	* Function that loads new slide
+	**/
         var loadNewSlide = function() {
                 setNewSlide();
                 manageButtons($new_set);
@@ -187,6 +227,9 @@
                 $($new_set).addClass("active");
         };
 
+	/**
+	* Function that manage previous/next button visibility
+	**/
         var manageButtons = function($new_set,isbegin) {
               //console.log(page);
               if($oSlides.length <= plugin.options.counter) {
@@ -202,6 +245,12 @@
                     setVisibility("visible","visible");
                 }
       };
+
+      /** 
+      *	Function that set previous/next button visibility
+      * - previous : visibility attribute of previous button
+      * - next : visibility attribute of next button
+      **/
       var setVisibility = function(previous,next){
               $(".prev_slide").css("visibility", previous);
               $(".next_slide").css("visibility", next);
@@ -209,20 +258,19 @@
         plugin.init();
     };
 
-      // On ajoute le plugin à l'objet jQuery $.fn
+    // Add plugin on jQuery Object $.fn
     $.fn.customSliders = function(options) {
 
-        // Pour chacuns des élément du dom à qui on a assigné le plugin
+        // For each element from DOM that we assign the plugin
         return this.each(function() {
 
-            // Si le plugin n'as pas deja été assigné à l'élément
+            // If element hasn't still assigned to the plugin
             if (undefined === $(this).data('customSliders')) {
 
-                // On crée une instance du plugin avec les options renseignées
+                // We create instance of customSliders plugin with options in parameter
                 var plugin = new $.customSliders(this, options);
-                // on stocke une référence de notre plugin
-                // pour pouvoir accéder à ses méthode publiques
-                // (non utilisé dans ce plugin)
+                // we stock reference from the plugin
+                // in order to get its public functions
                 $(this).data('customSliders', plugin);
 
             }
