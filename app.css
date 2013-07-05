@@ -1,4 +1,4 @@
-div.bloc_actus{
+.customSliders {
     height:200px;
     width:100%;
     overflow:hidden;
@@ -6,7 +6,7 @@ div.bloc_actus{
     margin:0;
 }
 
-div.bloc_actus div{
+.customSliders div {
     position: relative;
     margin-left:0.1%;
     height: 100%;
@@ -19,9 +19,11 @@ div.bloc_actus div{
     float: left;
     min-height: 1px;
     top:0;
+    text-align: center;
+    vertical-align: middle;
 }
 
-div.bloc_actus .active{
+.customSliders .active {
     background-color:red;
     opacity:0.9;
     color:white;
