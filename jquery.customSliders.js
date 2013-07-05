@@ -36,7 +36,6 @@
             current = plugin.options.counter;
             bindEvents();
             manageButtons(null,true);
-            refactor();
         };
 
         $.fn.customSliders.refactor = function(){ refactor () };
@@ -47,6 +46,7 @@
             plugin.options = $.extend({}, plugin.options, params);
             var new_counter = plugin.options.counter;
             var tmp_nb = 0;
+
             if(plugin.options.counter === null)
             {
                 for(var i=0; i<$oSlides.length;i++)
@@ -59,25 +59,13 @@
             else{
                 isCounterSet = true;
             }
+            
             $oSlides.removeClass("active");
-            begin_index = page*old_counter;
-            //current = begin_index+new_counter;
-            /**
-            $new_set = $oSlides.slice(begin_index,begin_index+new_counter).addClass("active").css("opacity",1);
-            console.log($new_set);
-            if(old_counter!=new_counter) {
-                isCounterSet = true;
-                page = Math.ceil(begin_index/new_counter);
-                console.log(begin_index/new_counter);
-                refactor();
-            **/
             current = new_counter;
             $new_set = $oSlides.slice(0,new_counter).addClass("active").css("opacity",1);
-            if(old_counter!=new_counter) {
-                isCounterSet = true;
-                page = 0
-                refactor();          
-            }
+            page = 0;
+            leftToRight = true;
+            refactor();          
         };
 
         var bindEvents = function() {
