@@ -8,7 +8,7 @@
           "difference" : 100,
           "showPast" : true,
           "counter" : null,
-	  "vertical" : true,
+	      "vertical" : true,
           "autodesign" : true
         };
 
@@ -154,7 +154,15 @@
                     }
                 else
                     var left = Math.round(((myposition.left*100)/main_width)*1000)/1000 ;
+
+                if (plugin.options.vertical === false)
+                {
+                    var left = left - top;
+                    var top = 0;
+                }
+                
                 test[index] = { left : left+"%", top : top+"%" };
+
                 //console.log(test[index]);
                 if(tmp_counter<plugin.options.counter-1)
                     tmp_counter+=1;
@@ -211,18 +219,36 @@
                 //console.log("page t=>" + page);
                 //console.log($($current_set[0]).text());
                 //console.log($($new_set[0]).text());
-                new_position = (position+"105%").replace("=","");
+                var increment = 105;
+                new_position = (position+105+"%").replace("=","");
                 var delay=0;
                 for (var i = 0; i < plugin.options.counter; i++) {
+                    if( plugin.options.vertical ===true)
+                    {
                     if ( plugin.options.showPast === true) {
                         $($current_set[i]).delay(delay).animate({top: new_position, opacity:0.4},plugin.options.duration);
                     } else {
                         $($current_set[i]).css("top",new_position).css("opacity",0.4);
                     }
-                    $($new_set[i]).delay(delay+plugin.options.difference).animate({top: "0%", opacity:1},plugin.options.duration);
+                        $($new_set[i]).delay(delay+plugin.options.difference).animate({top: "0%", opacity:1},plugin.options.duration);
+                    }
+                    else{
+                        left = parseFloat($current_set[i].style["left"]);
+                        if(position=="+=")
+                            newleft = left - increment;
+                        else
+                            newleft = left + increment;
+                        console.log("before : "+left+" after : "+newleft);
+                        if ( plugin.options.showPast === true) {  
+                            $($current_set[i]).delay(delay).animate({left: newleft+"%", opacity:0.4},plugin.options.duration);
+                        } else {
+                            $($current_set[i]).css("left",newleft).css("opacity",0.4);
+                        }
+                        $($new_set[i]).delay(delay+plugin.options.difference).animate({left: left+"%", opacity:1},plugin.options.duration);               
+                    }
                     delay += plugin.options.delayIncrement;
                 }
-                setTimeout(function(){alreadyBusy=false;}, delay+plugin.options.duration);
+                setTimeout(function(){alreadyBusy=false;/**console.log(delay+200+plugin.options.duration);**/}, delay+200+plugin.options.duration);
                 $($current_set).removeClass("active");
                 $($new_set).addClass("active");
         };
