@@ -177,7 +177,7 @@
                     tmp_counter=0;
 
             });
-            console.log(left_positions);
+            //console.log(left_positions);
             $oSlides.each(function( index ) {
                 var top = test[index].top;
                 var left = test[index].left;
@@ -240,7 +240,7 @@
                             newleft = left - increment;
                         else
                             newleft = left + increment;
-                        console.log("before : "+left+" after : "+newleft);
+                        //console.log("before : "+left+" after : "+newleft);
                         if ( plugin.options.showPast === true) {  
                             $($current_set[i]).delay(delay).animate({left: newleft+"%", opacity:0.4},plugin.options.duration,plugin.options.easing);
                         } else {
