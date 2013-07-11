@@ -9,7 +9,9 @@
           "showPast" : true,
           "counter" : null,
           "vertical" : true,
-          "autodesign" : true
+          "autodesign" : true,
+          // native API allows just "swing" and "linear" easing
+          "easing" : "swing"
         };
 
     // to help, we put "this" as a plugin variable
@@ -226,11 +228,11 @@
                     if( plugin.options.vertical ===true)
                     {
                     if ( plugin.options.showPast === true) {
-                        $($current_set[i]).delay(delay).animate({top: new_position, opacity:0.4},plugin.options.duration);
+                        $($current_set[i]).delay(delay).animate({top: new_position, opacity:0.4},plugin.options.duration,plugin.options.easing);
                     } else {
                         $($current_set[i]).css("top",new_position).css("opacity",0.4);
                     }
-                        $($new_set[i]).delay(delay+plugin.options.difference).animate({top: "0%", opacity:1},plugin.options.duration);
+                        $($new_set[i]).delay(delay+plugin.options.difference).animate({top: "0%", opacity:1},plugin.options.duration,plugin.options.easing);
                     }
                     else{
                         left = left_positions[i];
@@ -240,11 +242,11 @@
                             newleft = left + increment;
                         console.log("before : "+left+" after : "+newleft);
                         if ( plugin.options.showPast === true) {  
-                            $($current_set[i]).delay(delay).animate({left: newleft+"%", opacity:0.4},plugin.options.duration);
+                            $($current_set[i]).delay(delay).animate({left: newleft+"%", opacity:0.4},plugin.options.duration,plugin.options.easing);
                         } else {
                             $($current_set[i]).css("left",newleft).css("opacity",0.4);
                         }
-                        $($new_set[i]).delay(delay+plugin.options.difference).animate({left: left+"%", opacity:1},plugin.options.duration);               
+                        $($new_set[i]).delay(delay+plugin.options.difference).animate({left: left+"%", opacity:1},plugin.options.duration,plugin.options.easing);               
                     }
                     delay += plugin.options.delayIncrement;
                 }
